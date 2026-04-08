@@ -12,11 +12,11 @@ def generate_content(client, messages):
     response = client.models.generate_content(model="gemini-2.5-flash", contents=messages)
     return response
 
-def print_response(response):
-    if response.usage_metadata is None:
-        raise RuntimeError("Usage metadata is not available in the response.")
-    print(f"Prompt tokens: {response.usage_metadata.prompt_token_count}")
-    print(f"Response tokens: {response.usage_metadata.candidates_token_count}")
+def verbose_print(response, user_prompt, verbose):
+    if verbose:
+        print(f"User prompt: {user_prompt}")
+        print(f"Prompt tokens: {response.usage_metadata.prompt_token_count}")
+        print(f"Response tokens: {response.usage_metadata.candidates_token_count}")
 
     
 def main():
@@ -24,6 +24,7 @@ def main():
 
     parser = argparse.ArgumentParser(description="Generate content using Gemini API.")
     parser.add_argument("user_prompt", type=str, help="The prompt to generate content from.")
+    parser.add_argument("--verbose", action="store_true", help="Print verbose output.")
     args = parser.parse_args()
 
     api_key = os.environ.get("GEMINI_API_KEY")
@@ -34,7 +35,10 @@ def main():
     messages = [types.Content(role="user", parts=[types.Part(text=args.user_prompt)])]
     
     response = generate_content(client, messages)
-    print_response(response)
+    if response.usage_metadata is None:
+        raise RuntimeError("Usage metadata is not available in the response.")
+    
+    verbose_print(response, args.user_prompt, args.verbose)
     print(response.text)
 
 if __name__ == "__main__":
