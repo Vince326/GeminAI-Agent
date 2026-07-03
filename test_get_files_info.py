@@ -1,7 +1,11 @@
-from functions.get_file_content import get_file_content
+from functions.get_files_info import get_files_info
 
 def test():
-    result = get_file_content("calculator", "calculator.py")
-    print(f"Length: {len(result)}")
-    print(f"Last 100 chars: {result[-100:]}")
-    
+
+    print(f'Result for "." directory: {get_files_info("calculator", ".")}')
+    print(f'Result for "pkg" directory: {get_files_info("calculator", "pkg")}')
+    print(f'Result for "/bin" directory: {get_files_info("calculator", "/bin")}')
+    print(f'Result for "../" directory: {get_files_info("calculator", "../")}')
+
+if __name__ == "__main__":
+    test()
